@@ -8,6 +8,28 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r, echo=TRUE}
+
+## load libraries
+library("plyr")
+library("dplyr")
+library("tidyr")
+library("lubridate")
+library("knitr")
+
+## download data to working directory
+download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip","ProjectOne")
+
+## unzip data
+unzip("ProjectOne")
+
+## read in file including headers
+activity<-read.csv("activity.csv",header=TRUE)
+
+## convert dates to useful format
+activity$date<-ymd(activity$date)
+```
+
 
 
 ## What is mean total number of steps taken per day?
