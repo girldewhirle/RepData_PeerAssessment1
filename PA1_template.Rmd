@@ -91,6 +91,16 @@ print(as.numeric(max_out<-max_interval[1,1]))
 
 ## Imputing missing values
 
+Total number of rows with NAs in dataset:
+
+```{r,echo=TRUE}
+## calculate complete cases
+complete_cases<-complete.cases(activity)
+## print out number of rows that aren't complete cases
+print(as.data.frame(table(complete_cases))[1,2])
+```
+
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
