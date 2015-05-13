@@ -46,7 +46,7 @@ total_steps<-summarise(grouped_activities,sum(steps,na.rm=TRUE))
 
 ```
 
-```{r,echo=TRUE}
+```{r,echo=TRUE,message=FALSE}
 hist(total_steps$sum,main="Histogram of Total Steps (data grouped by day)",xlab="Total Steps by Day")
 
 ```
@@ -172,9 +172,5 @@ weekend_or_weekday<-function(day){
 ## use to group
 revised_activities<-mutate(revised_activities,wknd_wdy=weekend_or_weekday(day_of_week))
 
-```
-
-```{r,echo=TRUE}
-qplot(interval,steps,data=revised_activities,facets=.~wknd_wdy,geom="line")
 ```
 
