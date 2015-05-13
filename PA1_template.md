@@ -169,8 +169,11 @@ intervals<-group_by(activity,interval)
 steps_by_day<-summarise(intervals,mean(steps,na.rm=TRUE))
 ## rename column name
 colnames(steps_by_day)[2]<-"Mean_Steps"
+## format intervals
+steps_by_day<-mutate(steps_by_day,formatted_interval=sprintf("%04d", interval))
+steps_by_day<-mutate(steps_by_day,parsed_interval=parse_date_time(formatted_interval,"hm"))
 ## plot average no. steps
-plot(steps_by_day$interval,steps_by_day$Mean_Steps, type="l", ylab="Mean Steps per Interval (across all day)",xlab="Time of Day (24 Hour Clock)",main="Average Number of Steps at 5 Minute Intervals")
+plot(steps_by_day$parsed_interval,steps_by_day$Mean_Steps, type="l", ylab="Mean Steps per Interval (across all day)",xlab="Time of Day (24 Hour Clock)",main="Average Number of Steps at 5 Minute Intervals")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
@@ -210,6 +213,15 @@ print(as.data.frame(table(complete_cases))[1,2])
 
 ```r
 ## Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+```
+
+_Strategy for filling in the missing values:_  
+* use existing steps by day table and combine it with the activity table  
+* create a function that assesses if the steps value in the combined table is NA and if it is replaces it with the mean steps for that particular day i.e. what's in the mean steps field for that row  
+* run function against the steps value to create a 'new_steps' column
+
+
+```r
 ## using the steps_by_day table already created with mean steps per interval combine into a new value
 activity<-join(activity,steps_by_day)
 ```
@@ -237,7 +249,10 @@ activity$new_steps<-as.integer(activity$new_steps)
 revised_activities<-select(activity,new_steps,date,interval)
 ## rename new_steps to steps so can use same logic 
 colnames(revised_activities)[1]<-"steps"
+```
 
+
+```r
 ## group by date
 revised_activities<-group_by(revised_activities,date)
 ## calculate total steps
@@ -247,7 +262,7 @@ colnames(total_revised_steps)[2]<-"total_steps"
 hist(total_revised_steps$total_steps,main="Revised Histogram of Total Steps (data grouped by day)",xlab="Total Steps by Day")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
 
 ```r
 ## new mean value
@@ -664,4 +679,17 @@ revised_activities<-mutate(revised_activities,wknd_wdy=weekend_or_weekday(day_of
 ## Warning in if (day == "Saturday" | day == "Sunday") {: the condition has
 ## length > 1 and only the first element will be used
 ```
+
+```r
+## format the intervals to make plot clearer
+revised_activities<-mutate(revised_activities,formatted_interval=sprintf("%04d", interval))
+revised_activities<-mutate(revised_activities,parsed_interval=parse_date_time(formatted_interval,"hm"))
+```
+
+
+```r
+qplot(parsed_interval,steps,data=revised_activities,facets=.~wknd_wdy,geom="line")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
